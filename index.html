@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Destiny Ladies Conference 2026 — Personalized DP</title>
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Arial,Helvetica,sans-serif;background:radial-gradient(circle at top,#25114d,#080018 65%);color:#fff;min-height:100vh}
+  .wrap{width:min(1120px,94vw);margin:0 auto;padding:28px 0 50px}
+  .header{text-align:center;margin-bottom:22px}.header h1{margin:0;font-size:clamp(24px,4vw,42px);letter-spacing:.5px}.header p{margin:8px 0 0;color:#d8c9ef;font-size:15px}
+  .app{display:grid;grid-template-columns:360px 1fr;gap:28px;align-items:start}
+  .panel{background:rgba(255,255,255,.07);border:1px solid rgba(255,215,92,.35);border-radius:20px;padding:22px;backdrop-filter:blur(8px);box-shadow:0 18px 55px rgba(0,0,0,.3)}
+  .panel h2{font-size:20px;margin:0 0 16px}.field{margin:0 0 17px}.field label{display:block;font-weight:700;font-size:13px;margin-bottom:8px;color:#ffe98a}
+  input[type=text],input[type=number]{width:100%;height:48px;border:1px solid rgba(255,255,255,.2);border-radius:10px;background:#12072b;color:#fff;padding:0 14px;font-size:16px;outline:none}input:focus{border-color:#ffd65a;box-shadow:0 0 0 3px rgba(255,214,90,.12)}
+  .file{display:block;border:1px dashed #ffd65a;border-radius:12px;padding:14px;background:#12072b;color:#e8dcf7;cursor:pointer}.file input{display:none}.file strong{display:block;color:#fff}.file small{display:block;margin-top:5px;color:#aaa0bd}
+  .status{font-size:12px;color:#bfb3d0;margin-top:8px;min-height:16px}
+  button{width:100%;border:0;border-radius:11px;padding:14px 16px;font-size:15px;font-weight:800;cursor:pointer}.primary{background:linear-gradient(135deg,#ffd84e,#f39a12);color:#241000;box-shadow:0 8px 24px rgba(255,190,45,.22)}.secondary{margin-top:10px;background:#281449;color:#fff;border:1px solid rgba(255,255,255,.15)}button:disabled{opacity:.45;cursor:not-allowed}
+  .hint{margin-top:16px;padding:12px;border-radius:10px;background:rgba(255,255,255,.05);font-size:12px;line-height:1.5;color:#cfc5db}
+  .preview-card{background:rgba(255,255,255,.04);border-radius:20px;padding:16px;border:1px solid rgba(255,255,255,.1);text-align:center}.canvas-wrap{width:min(100%,760px);margin:auto;background:#05000e;border-radius:12px;overflow:hidden}.canvas-wrap canvas{display:block;width:100%;height:auto}
+  .preview-label{font-size:12px;color:#b9aec9;margin:0 0 10px}.footer{text-align:center;color:#8e829f;font-size:12px;margin-top:18px}
+  .modal{position:fixed;inset:0;background:rgba(0,0,0,.78);display:none;align-items:center;justify-content:center;padding:18px;z-index:20}.modal.show{display:flex}.modal-box{width:min(760px,96vw);background:#14082a;border:1px solid rgba(255,214,90,.5);border-radius:18px;padding:18px;box-shadow:0 25px 80px #000}.modal-box h3{margin:0 0 5px}.modal-box p{margin:0 0 15px;color:#c5b8d5;font-size:13px}.crop-stage{position:relative;width:100%;height:min(65vh,560px);background:#050308;border-radius:12px;overflow:hidden;touch-action:none}.crop-stage canvas{width:100%;height:100%;display:block}.crop-box{position:absolute;border:2px solid #ffd84e;box-shadow:0 0 0 9999px rgba(0,0,0,.52);cursor:move}.crop-box .handle{position:absolute;width:22px;height:22px;right:-11px;bottom:-11px;background:#ffd84e;border:3px solid #241000;border-radius:50%;cursor:nwse-resize}.modal-actions{display:flex;gap:10px;margin-top:14px}.modal-actions button{width:auto;flex:1}.zoom{margin:12px 0 0;display:flex;gap:10px;align-items:center}.zoom input{width:100%}.zoom span{font-size:12px;color:#c8bdd3;min-width:45px}
+  @media(max-width:850px){.app{grid-template-columns:1fr}.panel{order:2}.preview-card{order:1}.canvas-wrap{max-width:620px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header"><h1>Destiny Ladies Conference 2026</h1><p>Create your personalized “Will Be Attending” DP in seconds.</p></div>
+  <div class="app">
+    <section class="panel">
+      <h2>Personalize your DP</h2>
+      <div class="field">
+        <label for="photoInput">1. Upload your photo</label>
+        <label class="file" for="photoInput"><strong>Choose a photo</strong><small>After upload, you’ll be able to crop it.</small><input id="photoInput" type="file" accept="image/*"></label>
+        <div id="photoStatus" class="status"></div>
+      </div>
+      <div class="field"><label for="nameInput">2. Your name</label><input id="nameInput" type="text" maxlength="32" placeholder="e.g. Olajumoke Adeyemo"></div>
+      <div class="field"><label for="daysInput">3. Days to go</label><input id="daysInput" type="number" min="0" max="999" value="18"></div>
+      <button id="downloadBtn" class="primary">Download Personalized DP</button>
+      <button id="resetBtn" class="secondary">Reset</button>
+      <div class="hint">Tip: Use a clear portrait photo. The crop box is fixed to the photo area’s shape so your image fits the design cleanly.</div>
+    </section>
+    <section class="preview-card">
+      <p class="preview-label">Live preview</p>
+      <div class="canvas-wrap"><canvas id="preview" width="1254" height="1254"></canvas></div>
+    </section>
+  </div>
+  <div class="footer">Destiny Life Christian Centre • Destiny Ladies Conference 2026</div>
+</div>
+
+<div id="cropModal" class="modal" aria-hidden="true">
+  <div class="modal-box">
+    <h3>Crop your photo</h3><p>Drag the crop area to position it. Drag the yellow handle to resize.</p>
+    <div id="cropStage" class="crop-stage"><canvas id="cropCanvas"></canvas><div id="cropBox" class="crop-box"><div class="handle"></div></div></div>
+    <div class="zoom"><span>Zoom</span><input id="zoomInput" type="range" min="1" max="3" step="0.01" value="1"><span id="zoomValue">1.00×</span></div>
+    <div class="modal-actions"><button id="cancelCrop" class="secondary">Cancel</button><button id="applyCrop" class="primary">Apply Crop</button></div>
+  </div>
+</div>
+
+<script>
+const W=1254,H=1254;
+const PHOTO={x:53,y:205,w:634,h:590};
+const NAME={x:151,y:773,w:440,h:52};
+const DAYS={x:880,y:700,w:178,h:136};
+const base=new Image(); base.src='template.png';
+const preview=document.getElementById('preview'), ctx=preview.getContext('2d');
+const photoInput=document.getElementById('photoInput'), nameInput=document.getElementById('nameInput'), daysInput=document.getElementById('daysInput');
+const status=document.getElementById('photoStatus');
+let userImg=null, croppedCanvas=null;
+
+function fitText(ctx,text,maxWidth,start,min=18){let s=start;while(s>min){ctx.font=`800 ${s}px Arial`;if(ctx.measureText(text).width<=maxWidth)break;s--}return s}
+function draw(){
+  ctx.clearRect(0,0,W,H); ctx.drawImage(base,0,0,W,H);
+  if(croppedCanvas){
+    ctx.save();ctx.beginPath();ctx.rect(PHOTO.x,PHOTO.y,PHOTO.w,PHOTO.h);ctx.clip();ctx.drawImage(croppedCanvas,PHOTO.x,PHOTO.y,PHOTO.w,PHOTO.h);ctx.restore();
+  }
+  // Name field overlay: preserves the magenta strip while removing the template placeholder text.
+  ctx.save();
+  const ng=ctx.createLinearGradient(NAME.x,0,NAME.x+NAME.w,0);ng.addColorStop(0,'rgba(204,8,113,.96)');ng.addColorStop(.5,'rgba(181,0,107,.98)');ng.addColorStop(1,'rgba(208,10,118,.94)');
+  ctx.fillStyle=ng;ctx.fillRect(NAME.x,NAME.y,NAME.w,NAME.h);ctx.restore();
+  const nm=(nameInput.value||'YOUR NAME').trim().toUpperCase();
+  ctx.fillStyle='#fff';ctx.textAlign='center';ctx.textBaseline='middle';ctx.font=`800 ${fitText(ctx,nm,NAME.w-20,28,15)}px Arial`;ctx.fillText(nm,NAME.x+NAME.w/2,NAME.y+NAME.h/2+1);
+  // Days number overlay: cover the original 18 inside the badge, leaving the gold badge and DAYS TO GO untouched.
+  ctx.save();ctx.fillStyle='rgba(34,7,44,.93)';ctx.beginPath();ctx.ellipse(969,770,91,67,0,0,Math.PI*2);ctx.fill();ctx.restore();
+  const days=String(daysInput.value===''?'18':daysInput.value);
+  const fs=fitText(ctx,days,150,104,42);ctx.fillStyle='#ffe85a';ctx.textAlign='center';ctx.textBaseline='middle';ctx.font=`900 ${fs}px Georgia`;ctx.shadowColor='rgba(255,214,70,.65)';ctx.shadowBlur=8;ctx.fillText(days,969,766);ctx.shadowBlur=0;
+}
+base.onload=draw;
+nameInput.addEventListener('input',draw);daysInput.addEventListener('input',draw);
+
+// Cropper
+const modal=document.getElementById('cropModal'), stage=document.getElementById('cropStage'), cropCanvas=document.getElementById('cropCanvas'), cctx=cropCanvas.getContext('2d'), box=document.getElementById('cropBox'), zoomInput=document.getElementById('zoomInput'), zoomValue=document.getElementById('zoomValue');
+let cropImg=null, scale=1, imgFit=1, crop={x:40,y:40,w:400,h:372}, drag=null;
+const ratio=PHOTO.w/PHOTO.h;
+function stageSize(){return {w:stage.clientWidth,h:stage.clientHeight}}
+function renderCrop(){
+  const s=stageSize();cropCanvas.width=s.w*devicePixelRatio;cropCanvas.height=s.h*devicePixelRatio;cctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);cctx.clearRect(0,0,s.w,s.h);
+  if(!cropImg)return;
+  const fit=Math.min(s.w/cropImg.width,s.h/cropImg.height); imgFit=fit;
+  const z=scale; const dw=cropImg.width*fit*z, dh=cropImg.height*fit*z; const ox=(s.w-dw)/2, oy=(s.h-dh)/2;
+  cctx.drawImage(cropImg,ox,oy,dw,dh);
+  box.style.left=crop.x+'px';box.style.top=crop.y+'px';box.style.width=crop.w+'px';box.style.height=crop.h+'px';
+}
+function initCrop(){
+  const s=stageSize();const w=Math.min(s.w*.82,520),h=w/ratio;crop={x:(s.w-w)/2,y:(s.h-h)/2,w,h};scale=1;zoomInput.value=1;zoomValue.textContent='1.00×';renderCrop();
+}
+function point(e){const r=stage.getBoundingClientRect();return {x:(e.clientX||e.touches?.[0]?.clientX)-r.left,y:(e.clientY||e.touches?.[0]?.clientY)-r.top}}
+box.addEventListener('pointerdown',e=>{if(e.target.classList.contains('handle'))drag={type:'resize',p:point(e),start:{...crop}};else drag={type:'move',p:point(e),start:{...crop}};box.setPointerCapture(e.pointerId);e.preventDefault()});
+box.addEventListener('pointermove',e=>{if(!drag)return;const p=point(e),dx=p.x-drag.p.x,dy=p.y-drag.p.y,s=stageSize();if(drag.type==='move'){crop.x=Math.max(0,Math.min(s.w-crop.w,drag.start.x+dx));crop.y=Math.max(0,Math.min(s.h-crop.h,drag.start.y+dy));}else{let nw=Math.max(130,Math.min(s.w-crop.x,drag.start.w+dx));let nh=nw/ratio;if(crop.y+nh>s.h){nh=s.h-crop.y;nw=nh*ratio}crop.w=nw;crop.h=nh;}renderCrop();});
+box.addEventListener('pointerup',()=>drag=null);box.addEventListener('pointercancel',()=>drag=null);
+zoomInput.addEventListener('input',()=>{scale=parseFloat(zoomInput.value);zoomValue.textContent=scale.toFixed(2)+'×';renderCrop()});
+photoInput.addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;const url=URL.createObjectURL(f);cropImg=new Image();cropImg.onload=()=>{modal.classList.add('show');modal.setAttribute('aria-hidden','false');setTimeout(initCrop,20);status.textContent=f.name+' selected — crop it below.'};cropImg.src=url});
+document.getElementById('cancelCrop').onclick=()=>{modal.classList.remove('show');modal.setAttribute('aria-hidden','true')};
+document.getElementById('applyCrop').onclick=()=>{
+  if(!cropImg)return; const s=stageSize(); const fit=Math.min(s.w/cropImg.width,s.h/cropImg.height), z=scale; const dw=cropImg.width*fit*z,dh=cropImg.height*fit*z,ox=(s.w-dw)/2,oy=(s.h-dh)/2;
+  const sx=Math.max(0,(crop.x-ox)/(fit*z)), sy=Math.max(0,(crop.y-oy)/(fit*z)), sw=crop.w/(fit*z), sh=crop.h/(fit*z);
+  croppedCanvas=document.createElement('canvas');croppedCanvas.width=900;croppedCanvas.height=Math.round(900/ratio);croppedCanvas.getContext('2d').drawImage(cropImg,sx,sy,sw,sh,0,0,croppedCanvas.width,croppedCanvas.height);
+  modal.classList.remove('show');modal.setAttribute('aria-hidden','true');status.textContent='Photo cropped and applied ✓';draw();
+};
+window.addEventListener('resize',()=>{if(modal.classList.contains('show'))renderCrop()});
+
+document.getElementById('resetBtn').onclick=()=>{photoInput.value='';nameInput.value='';daysInput.value='18';userImg=null;croppedCanvas=null;status.textContent='';draw()};
+document.getElementById('downloadBtn').onclick=()=>{
+  if(!croppedCanvas){alert('Please upload and crop your photo first.');return}
+  const a=document.createElement('a');a.download=(nameInput.value.trim()?nameInput.value.trim().replace(/\s+/g,'_'):'Destiny_Ladies')+'_DP.png';a.href=preview.toDataURL('image/png');a.click();
+};
+</script>
+</body>
+</html>
